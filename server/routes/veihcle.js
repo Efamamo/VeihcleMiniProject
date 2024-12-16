@@ -9,5 +9,12 @@ import {
 export const veihcleRouter = Router();
 
 veihcleRouter.get('/', getVehicles);
-veihcleRouter.post('/', addVehicle);
+veihcleRouter.post(
+  '/',
+  [
+    check('name').notEmpty().withMessage('name is required'),
+    check('status').notEmpty().withMessage('status is required'),
+  ],
+  addVehicle
+);
 veihcleRouter.patch('/:id', updateStatus);

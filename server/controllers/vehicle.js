@@ -31,7 +31,9 @@ export const addVehicle = async (req, res) => {
       status.trim().toLowerCase() != 'unavailable'
     ) {
       return res.status(400).json({
-        error: 'Status should be either pending | available | unavailable',
+        errors: {
+          status: 'Status should be either pending | available | unavailable',
+        },
       });
     }
 
@@ -51,22 +53,21 @@ export const addVehicle = async (req, res) => {
 export const updateStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const {status} = res.body
+    const { status } = req.body;
 
-    
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: 'Invalid Vehicle ID' });
     }
 
     if (
-        status.trim().toLowerCase() != 'pending' &&
-        status.trim().toLowerCase() != 'available' &&
-        status.trim().toLowerCase() != 'unavailable'
-      ) {
-        return res.status(400).json({
-          error: 'Status should be either pending | available | unavailable',
-        });
-      }
+      status.trim().toLowerCase() != 'pending' &&
+      status.trim().toLowerCase() != 'available' &&
+      status.trim().toLowerCase() != 'unavailable'
+    ) {
+      return res.status(400).json({
+        error: 'Status should be either pending | available | unavailable',
+      });
+    }
 
     const vehicle = await Vehicle.findById(id);
 
@@ -75,11 +76,9 @@ export const updateStatus = async (req, res) => {
     }
 
     vehicle.status = status;
-    await vehicle.save()
+    await vehicle.save();
 
-    res.json(vehicle)
-
-    
+    res.json(vehicle);
   } catch (e) {
     console.log(e);
     res.status(500).json({ error: 'server error' });
